@@ -52,7 +52,7 @@ export default function RankIndex({ id }: { id: string }) {
         return (
             <div style={{ margin: '0 5%' }}>
                 <div className="gap-5 grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-5 md:grid-cols-5">
-                    {[...Array(6)].map((_, index) => (
+                    {[...Array(5)].map((_, index) => (
                         <Card className="w-[50%px] space-y-5 p-4" key={index}>
                             <Skeleton className="rounded-lg">
                                 <div className="h-24 rounded-lg bg-default-300"></div>
