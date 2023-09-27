@@ -6,6 +6,7 @@ interface HeartIconProps {
     height?: number;
     strokeWidth?: number;
     fill?: string;
+    className?: string;
 }
 
 export const HeartIcon = ({

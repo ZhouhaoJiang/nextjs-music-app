@@ -4,6 +4,7 @@ interface PauseCircleIconProps {
     size?: number;
     width?: number;
     height?: number;
+    className?: string;
 }
 
 export const PauseCircleIcon = ({ size = 24, width, height, ...props }: PauseCircleIconProps) => (

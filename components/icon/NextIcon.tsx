@@ -4,6 +4,7 @@ interface NextIconProps {
     size?: number;
     width?: number;
     height?: number;
+    className?: string;
 }
 
 export const NextIcon = ({ size = 24, width, height, ...props }: NextIconProps) => (

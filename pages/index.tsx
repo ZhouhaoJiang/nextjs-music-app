@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Avatar,
     Card,
@@ -19,25 +19,16 @@ import {
     Tabs
 } from "@nextui-org/react";
 import { AcmeLogo } from "../components/MusicLogo.tsx";
-import { SearchIcon } from "../components/SearchIcon.tsx";
+import { SearchIcon } from "../components/icon/SearchIcon.tsx";
 import RankIndex from "@/components/Rankdata.tsx";
 import { Link } from "@nextui-org/link";
+import VideoPlayer from "@/components/VideoPlayer.tsx";
+import VideoPlayerButton from "@/components/icon/VideoPlayerButton.tsx";
 
 export default function App() {
     // const [selected, setSelected] = React.useState("login");
     const [selected, setSelected] = React.useState<string>("飙升榜")
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    // const [loadedRankData, setLoadedRankData] = React.useState<{ [key: string]: React.ReactNode }>({});
-    // useEffect(() => {
-    //     // 在这里加载所有的榜单数据
-    //     const rankData = {
-    //         "飙升榜": <RankIndex id={"19723756"}/>,
-    //         "新歌榜": <RankIndex id={"3779629"}/>,
-    //         "热歌榜": <RankIndex id={"3778678"}/>,
-    //         "原创榜": <RankIndex id={"2884035"}/>,
-    //     };
-    //     setLoadedRankData(rankData);
-    // }, []);
 
     const menuItems = [
         "Profile",
@@ -51,6 +42,8 @@ export default function App() {
         "Help & Feedback",
         "Log Out",
     ];
+    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+
     return (
         <>
             <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -144,7 +137,7 @@ export default function App() {
                     </Dropdown>
                 </NavbarContent>
             </Navbar>
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full z-0">
                 <Card className="max-w-full " style={{ margin: '0 5%', marginTop: '1%' }}>
                     <CardBody className="overflow-hidden">
                         <Tabs
@@ -154,11 +147,6 @@ export default function App() {
                             selectedKey={selected}
                             onSelectionChange={(key) => setSelected(key as string)}
                         >
-                            {/*{Object.keys(loadedRankData).map((key) => (*/}
-                            {/*    <Tab key={key} title={key}>*/}
-                            {/*        {loadedRankData[key]}*/}
-                            {/*    </Tab>*/}
-                            {/*))}*/}
                             <Tab key="飙升榜" title="飙升榜">
                                 <RankIndex id={"19723756"}/>
                             </Tab>
@@ -174,6 +162,16 @@ export default function App() {
                         </Tabs>
                     </CardBody>
                 </Card>
+            </div>
+            <div className="z-10">
+                <div className="fixed">
+                    <VideoPlayerButton onClick={() => setShowVideoPlayer(!showVideoPlayer)}/>
+                </div>
+                {showVideoPlayer && (
+                    <div className="fixed bottom-16 right-5 z-10">
+                        <VideoPlayer/>
+                    </div>
+                )}
             </div>
         </>
     );
