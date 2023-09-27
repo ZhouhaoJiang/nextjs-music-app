@@ -8,7 +8,7 @@ async function fetchData(id: string) {
         // 获取当前时间戳
         const timestamp = new Date().getTime()
         console.info(timestamp)
-        const response = await fetch(`http://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=15`, { credentials: 'include' });
+        const response = await fetch(`https://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=15`, { credentials: 'include' });
 
         if (!response.ok) {
             if (response.status === 404) {
@@ -52,7 +52,7 @@ export default function RankIndex({ id }: { id: string }) {
         return (
             <div style={{ margin: '0 5%' }}>
                 <div className="gap-5 grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-5 md:grid-cols-5">
-                    {[...Array(6)].map((_, index) => (
+                    {[...Array(5)].map((_, index) => (
                         <Card className="w-[50%px] space-y-5 p-4" key={index}>
                             <Skeleton className="rounded-lg">
                                 <div className="h-24 rounded-lg bg-default-300"></div>
