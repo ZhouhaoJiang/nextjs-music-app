@@ -8,7 +8,7 @@ async function fetchData(id: string) {
         // 获取当前时间戳
         const timestamp = new Date().getTime()
         console.info(timestamp)
-        const response = await fetch(`http://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=15`, { credentials: 'include' });
+        const response = await fetch(`https://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=15`, { credentials: 'include' });
 
         if (!response.ok) {
             if (response.status === 404) {
