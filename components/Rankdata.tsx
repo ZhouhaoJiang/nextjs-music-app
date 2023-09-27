@@ -3,18 +3,24 @@ import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
 
 
 async function fetchData(id: string) {
+    console.log(process.env.NODE_ENV);
     try {
-        const response = await fetch(`http://127.0.0.1:8000/get_rank?rank_id=${id}`);
+        // 获取当前时间戳
+        const timestamp = new Date().getTime()
+        console.info(timestamp)
+        const response = await fetch(`http://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=15`, { credentials: 'include' });
 
         if (!response.ok) {
             if (response.status === 404) {
-                throw new Error('Data not found');
+                console.error('Data not found');
             } else {
-                throw new Error('Network response was not ok');
+                console.info('Network response was not ok');
             }
         }
+        console.info(response)
         const responseBody = await response.json();
-        return responseBody?.data?.result?.tracks || [];
+
+        return responseBody?.songs || [];
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         throw error;
@@ -33,36 +39,27 @@ export default function RankIndex({ id }: { id: string }) {
                     const newList = data.map((item: any) => {
                         return {
                             title: item.name,
-                            img: item.album.blurPicUrl,
-                            price: item.artists[0].name,
+                            img: item.al.picUrl,
+                            price: item.ar[0].name,
                         }
                     })
                     setList(newList); // 将新的列表设置为状态变量的值
-                    //等待2S
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, 1000);
+                    setLoading(false)
                 }
             )
     }, [id])
     if (loading) {
         return (
             <div style={{ margin: '0 5%' }}>
-                <div className="gap-2 grid grid-cols-2 sm:grid-cols-6">
+                <div className="gap-5 grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-5 md:grid-cols-5">
                     {[...Array(6)].map((_, index) => (
                         <Card className="w-[50%px] space-y-5 p-4" key={index}>
                             <Skeleton className="rounded-lg">
                                 <div className="h-24 rounded-lg bg-default-300"></div>
                             </Skeleton>
                             <div className="space-y-3">
-                                <Skeleton className="w-3/5 rounded-lg">
-                                    <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
-                                </Skeleton>
-                                <Skeleton className="w-4/5 rounded-lg">
-                                    <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
-                                </Skeleton>
-                                <Skeleton className="w-2/5 rounded-lg">
-                                    <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+                                <Skeleton className="w-full rounded-lg">
+                                    <div className="h-3 w-5 rounded-lg bg-default-200"></div>
                                 </Skeleton>
                             </div>
                         </Card>
@@ -73,15 +70,15 @@ export default function RankIndex({ id }: { id: string }) {
     }
 
     return (
-        <div className="gap-2 grid grid-cols-2 sm:grid-cols-6">
-            {list.slice(0, 18).map((item, index) => (
+        <div className="gap-2 grid grid-cols-2 sm:grid-cols-5 z-0">
+            {list.slice(0, 15).map((item, index) => (
                 <Card
                     shadow="sm"
                     key={index}
                     isPressable
                     onPress={() => console.log("item pressed")}
                 >
-                    <CardBody className="overflow-visible p-0">
+                    <CardBody className="overflow-visible p-0 z-0">
                         <Image
                             shadow="sm"
                             radius="lg"

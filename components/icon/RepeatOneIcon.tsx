@@ -4,6 +4,7 @@ interface RepeatOneIconProps {
     size?: number;
     width?: number;
     height?: number;
+    className?: string;
 }
 
 export const RepeatOneIcon = ({ size = 24, width, height, ...props }: RepeatOneIconProps) => (
