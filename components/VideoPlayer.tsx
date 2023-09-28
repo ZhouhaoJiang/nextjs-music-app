@@ -7,9 +7,32 @@ import { PreviousIcon } from "./icon/PreviousIcon";
 import { RepeatOneIcon } from "./icon/RepeatOneIcon";
 import { ShuffleIcon } from "./icon/ShuffleIcon";
 
-
-export default function VideoPlayer() {
+export default function VideoPlayer({ id, currentSong }: { id: string, currentSong: any }) {
     const [liked, setLiked] = React.useState(false);
+
+    console.info(currentSong);
+
+    async function fetchSongUrl() {
+        console.log(process.env.NODE_ENV);
+        try {
+            // 获取当前音乐的播放 url
+            const response = await fetch(`https://https://clouldmusicapi.sleepnow.work/song/url/v1?id=${id}&level=standard`, { credentials: 'include' });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.error('Data not found');
+                } else {
+                    console.info('Network response was not ok');
+                }
+            }
+            const responseBody = await response.json();
+
+            return responseBody?.songs || [];
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+            throw error;
+        }
+    }
 
     return (
         <Card
@@ -26,7 +49,7 @@ export default function VideoPlayer() {
                             className="object-cover"
                             height={200}
                             shadow="md"
-                            src="/images/album-cover.png"
+                            src={currentSong ? currentSong.al?.picUrl : "public/images/album-cover.png"} // 有bug
                             width="100%"
                         />
                     </div>
@@ -34,8 +57,8 @@ export default function VideoPlayer() {
                     <div className="flex flex-col col-span-6 md:col-span-8">
                         <div className="flex justify-between items-start">
                             <div className="flex flex-col gap-0">
-                                <h3 className="font-semibold text-foreground/90">Daily Mix</h3>
-                                <p className="text-small text-foreground/80">12 Tracks</p>
+                                <h3 className="font-semibold text-foreground/90">{currentSong ? currentSong.name : "Daily Mix"}</h3>
+                                <p className="text-small text-foreground/80">{currentSong && currentSong.ar && currentSong.ar[0] ? currentSong.ar[0].name : "12 Tracks"}</p>
                                 <h1 className="text-large font-medium mt-2">Frontend Radio</h1>
                             </div>
                             <Button
