@@ -7,8 +7,7 @@ async function fetchData(id: string) {
     try {
         // 获取当前时间戳
         const timestamp = new Date().getTime()
-        console.info(timestamp)
-        const response = await fetch(`https://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestap=${timestamp}&limit=18`, { credentials: 'include' });
+        const response = await fetch(`https://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestamp=${timestamp}&limit=18`, { credentials: 'include' });
 
         if (!response.ok) {
             if (response.status === 404) {
@@ -17,7 +16,6 @@ async function fetchData(id: string) {
                 console.info('Network response was not ok');
             }
         }
-        console.info(response)
         const responseBody = await response.json();
 
         return responseBody?.songs || [];
@@ -28,26 +26,33 @@ async function fetchData(id: string) {
 }
 
 
-export default function RankIndex({ id }: { id: string }) {
-    const [list, setList] = useState<{ title: string; img: string; price: string; }[]>([]);
+// 接受传递的列表 id，和设置当前音乐id的方法 setCurrentId()
+export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
+    id: string,
+    setCurrentId: (id: string) => void,
+    setCurrentSongData: (data: any) => void
+}) {
+    const [list, setList] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchData(id)
             .then(
                 (data) => {
-                    const newList = data.map((item: any) => {
-                        return {
-                            title: item.name,
-                            img: item.al.picUrl,
-                            price: item.ar[0].name,
-                        }
-                    })
-                    setList(newList); // 将新的列表设置为状态变量的值
+//                    const newList = data.map((item: any) => {
+//                        return {
+//                            id : item.id,
+//                            title: item.name,
+//                            img: item.al.picUrl,
+//                            price: item.ar[0].name,
+//                        }
+//                    })
+//                    setCurrentSongData(data);
+                    setList(data); // 将新的列表设置为状态变量的值
                     setLoading(false)
                 }
             )
-    }, [id])
+    }, [id, setCurrentSongData])
     if (loading) {
         return (
             <div style={{ margin: '0 5%' }}>
@@ -71,26 +76,31 @@ export default function RankIndex({ id }: { id: string }) {
 
     return (
         <div className="gap-2 grid grid-cols-2 sm:grid-cols-6 z-0">
-            {list.slice(0, 18).map((item, index) => (
+            {list.slice(0, 18).map((item: any, index) => (
                 <Card
                     shadow="sm"
                     key={index}
                     isPressable
-                    onPress={() => console.log("item pressed")}
+                    onClick={() => {
+                        setCurrentId(item.id);
+                        console.info(item.name);
+                        setCurrentSongData(item);
+                    }} // 设置当前播放的音乐 id
+                    //                    onPress={() => console.log("item pressed")}
                 >
                     <CardBody className="overflow-visible p-0 z-0">
                         <Image
                             shadow="sm"
                             radius="lg"
                             width="100%"
-                            alt={item.title}
+                            alt={item.name}
                             className="w-full object-cover h-[20%px]"
-                            src={item.img}
+                            src={item.al.picUrl}
                         />
                     </CardBody>
                     <CardFooter className="text-small justify-between">
-                        <b>{item.title}</b>
-                        <p className="text-default-500">{item.price}</p>
+                        <b>{item.name}</b>
+                        <p className="text-default-500">{item.ar[0].name}</p>
                     </CardFooter>
                 </Card>
             ))}

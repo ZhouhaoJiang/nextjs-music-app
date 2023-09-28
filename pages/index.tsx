@@ -43,6 +43,11 @@ export default function App() {
         "Log Out",
     ];
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [currentId, setCurrentId] = useState('');
+    const [currentSongData, setCurrentSongData] = useState({});
+
+    console.info(currentSongData);
+
 
     return (
         <>
@@ -148,16 +153,20 @@ export default function App() {
                             onSelectionChange={(key) => setSelected(key as string)}
                         >
                             <Tab key="飙升榜" title="飙升榜">
-                                <RankIndex id={"19723756"}/>
+                                <RankIndex id={"19723756"} setCurrentId={setCurrentId}
+                                           setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="新歌榜" title="新歌榜">
-                                <RankIndex id={"3779629"}/>
+                                <RankIndex id={"3779629"} setCurrentId={setCurrentId}
+                                           setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="热歌榜" title="热歌榜">
-                                <RankIndex id={"3778678"}/>
+                                <RankIndex id={"3778678"} setCurrentId={setCurrentId}
+                                           setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="原创榜" title="原创榜">
-                                <RankIndex id={"2884035"}/>
+                                <RankIndex id={"2884035"} setCurrentId={setCurrentId}
+                                           setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                         </Tabs>
                     </CardBody>
@@ -169,7 +178,7 @@ export default function App() {
                 </div>
                 {showVideoPlayer && (
                     <div className="fixed bottom-16 right-5 z-10">
-                        <VideoPlayer/>
+                        <VideoPlayer id={currentId} currentSong={currentSongData}/>
                     </div>
                 )}
             </div>
