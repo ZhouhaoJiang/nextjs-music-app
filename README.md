@@ -1,6 +1,6 @@
-# Next.js & NextUI Template
+# Next.js Music App
 
-This is a template for creating applications using Next.js 13 (pages directory) and NextUI (v2).
+A music app based on nextUI
 
 ## Technologies Used
 
@@ -12,13 +12,10 @@ This is a template for creating applications using Next.js 13 (pages directory) 
 - [Framer Motion](https://www.framer.com/motion)
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
-## How to Use
+## Show
 
-To create a new project based on this template using `create-next-app`, run the following command:
+![Computer terminal](./public/example/computer.png)
 
-```bash
-npx create-next-app -e https://github.com/nextui-org/next-pages-template
-```
 ## License
 
 Licensed under the [MIT license](https://github.com/nextui-org/next-pages-template/blob/main/LICENSE).
