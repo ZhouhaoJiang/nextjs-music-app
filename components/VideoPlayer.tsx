@@ -49,7 +49,7 @@ export default function VideoPlayer({ id, currentSong }: { id: string, currentSo
                             className="object-cover"
                             height={200}
                             shadow="md"
-                            src={currentSong ? currentSong.al?.picUrl : "public/images/album-cover.png"} // 有bug
+                            src={currentSong && currentSong.al ? currentSong.al.picUrl : "./images/album-cover.png"}
                             width="100%"
                         />
                     </div>
