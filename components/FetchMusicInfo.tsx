@@ -1,3 +1,5 @@
+import MusicInfo from "@/models/MusicInfo.tsx";
+
 async function fetchRankData(id: string) {
     try {
         // 获取当前时间戳
@@ -21,20 +23,15 @@ async function fetchRankData(id: string) {
     }
 }
 
-interface MusicInfo {
-    id: number;
-    name: string;
-    musicUrl: string;
-    picUrl: string;
-    lrc: string
-}
-
-async function fetchMusicInfo(id: number): Promise<MusicInfo | null> {
+export default async function fetchMusicInfo(id: number): Promise<MusicInfo | null> {
+    console.info(id)
     try {
-        const urlResponse = await fetch(`https://clouldmusicapi.sleepnow.work/song/url?id=${id}`, { credentials: 'include' });
-        const picUrlResponse = await fetch(`https://clouldmusicapi.sleepnow.work/song/detail?ids=${id}`, { credentials: 'include' });
-        const lrcResponse = await fetch(`https://clouldmusicapi.sleepnow.work/lyric?id=${id}`, { credentials: 'include' });
-        if (!urlResponse.ok || !picUrlResponse.ok) {
+        const [urlResponse, picUrlResponse, lrcResponse] = await Promise.all([
+            fetch(`https://clouldmusicapi.sleepnow.work/song/url?id=${id}`, { credentials: 'include' }),
+            fetch(`https://clouldmusicapi.sleepnow.work/song/detail?ids=${id}`, { credentials: 'include' }),
+            fetch(`https://clouldmusicapi.sleepnow.work/lyric?id=${id}`, { credentials: 'include' })
+        ]);
+        if (!urlResponse.ok || !picUrlResponse.ok || !lrcResponse) {
             if (urlResponse.status === 404 || picUrlResponse.status === 404) {
                 console.error('Data not found');
             } else {
@@ -45,15 +42,20 @@ async function fetchMusicInfo(id: number): Promise<MusicInfo | null> {
         const picUrlResponseBody = await picUrlResponse.json();
         const lrcResponseBody = await lrcResponse.json()
 
-        const musicUrl = urlResponseBody?.data.url
+        console.info(urlResponseBody)
+        console.info(picUrlResponseBody)
+
+        const musicUrl = urlResponseBody?.data[0].url
+        const arName = picUrlResponseBody?.songs[0].ar[0].name
         const picUrl = picUrlResponseBody?.songs[0].al.picUrl
-        const name = picUrlResponseBody?.songs[0].name
-        const lrc = lrcResponseBody?.lrc
+        const musicName = picUrlResponseBody?.songs[0].name
+        const lrc = lrcResponseBody?.lrc.lyric
 
         const musicInfo: MusicInfo = {
             id: id,
-            name: name || '',
-            musicUrl: name || '',
+            arName: arName || '',
+            musicName: musicName || '',
+            musicUrl: musicUrl || '',
             picUrl: picUrl || '',
             lrc: lrc || '',
         };
