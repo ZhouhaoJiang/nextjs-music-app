@@ -39,15 +39,6 @@ export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
         fetchData(id)
             .then(
                 (data) => {
-//                    const newList = data.map((item: any) => {
-//                        return {
-//                            id : item.id,
-//                            title: item.name,
-//                            img: item.al.picUrl,
-//                            price: item.ar[0].name,
-//                        }
-//                    })
-//                    setCurrentSongData(data);
                     setList(data); // 将新的列表设置为状态变量的值
                     setLoading(false)
                 }
@@ -83,10 +74,8 @@ export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
                     isPressable
                     onClick={() => {
                         setCurrentId(item.id);
-                        console.info(item.name);
                         setCurrentSongData(item);
                     }} // 设置当前播放的音乐 id
-                    //                    onPress={() => console.log("item pressed")}
                 >
                     <CardBody className="overflow-visible p-0 z-0">
                         <Image
