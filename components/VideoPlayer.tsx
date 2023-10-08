@@ -19,9 +19,15 @@ function formatTime(time: number) {
 export default function VideoPlayer({ currentId }: { currentId: string }) {
     const [liked, setLiked] = React.useState(false);
     const [currentSongData, setCurrentSongData] = useState<MusicInfo | null>(null)
+    const defaultMusicInfo: MusicInfo = {
+        id: 0,
+        arName: "Daily Mix",
+        musicName: "12 Tracks",
+        musicUrl: "./images/album-cover.png",
+        picUrl: "",
+        lrc: ""
+    };
     const audioRef: any = useRef();
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
     // 控制播放和暂停
     const togglePlay = () => {
         if (audioRef.current.paused) {
@@ -30,6 +36,8 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             audioRef.current.pause();
         }
     };
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         fetchMusicInfo(Number(currentId))
@@ -41,6 +49,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                         setCurrentTime(audioRef.current?.currentTime || 0);
                     };
                     audioRef.current.onloadedmetadata = () => {
+                        // setDuration(audioRef.current.duration);
                         setDuration(audioRef.current?.duration);
                     };
                 } else {
@@ -54,16 +63,9 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
 
 
     const handleSeekBarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        audioRef.current.currentTime = parseFloat(event.target.value);
         setCurrentTime(parseFloat(event.target.value));
-
     };
-
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.currentTime = currentTime;
-            audioRef.current.play();
-        }
-    }, [currentTime]);
 
 
     return (
@@ -111,17 +113,6 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                         </div>
 
                         <div className="flex flex-col mt-3 gap-1">
-                            {/*<Progress*/}
-                            {/*    aria-label="Music progress"*/}
-                            {/*    classNames={{*/}
-                            {/*        indicator: "bg-default-800 dark:bg-white",*/}
-                            {/*        track: "bg-default-500/30",*/}
-                            {/*    }}*/}
-                            {/*    color="default"*/}
-                            {/*    size="sm"*/}
-                            {/*    value={(currentTime / duration) * 100}*/}
-                            {/*    onChange={handleSeekBarChange}*/}
-                            {/*/>*/}
                             <input
                                 type="range"
                                 min="0"
