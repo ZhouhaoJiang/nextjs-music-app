@@ -44,7 +44,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             .then((data: MusicInfo | null) => {
                 if (data !== null) {
                     setCurrentSongData(data);
-                    audioRef.current.play(); // 开始播放
+                    console.info("准备开始播放")
                     audioRef.current.ontimeupdate = () => {
                         setCurrentTime(audioRef.current?.currentTime || 0);
                     };
@@ -52,6 +52,9 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                         // setDuration(audioRef.current.duration);
                         setDuration(audioRef.current?.duration);
                     };
+                    setTimeout(() => {
+                        audioRef.current.play(); // 等待1秒后开始播放
+                    }, 100);
                 } else {
                     console.log("Data is null or fetching failed.");
                 }

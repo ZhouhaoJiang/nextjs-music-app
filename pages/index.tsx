@@ -42,7 +42,7 @@ export default function App() {
         "Help & Feedback",
         "Log Out",
     ];
-    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [showVideoPlayer, setShowVideoPlayer] = useState(true);
     const [currentId, setCurrentId] = useState('');
     const [currentSongData, setCurrentSongData] = useState({});
 
