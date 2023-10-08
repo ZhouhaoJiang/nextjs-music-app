@@ -24,7 +24,6 @@ import RankIndex from "@/components/Rankdata.tsx";
 import { Link } from "@nextui-org/link";
 import VideoPlayer from "@/components/VideoPlayer.tsx";
 import VideoPlayerButton from "@/components/icon/VideoPlayerButton.tsx";
-import MusicInfo from "@/models/MusicInfo.tsx";
 
 export default function App() {
     // const [selected, setSelected] = React.useState("login");
@@ -47,14 +46,6 @@ export default function App() {
     const [currentId, setCurrentId] = useState('');
     const [currentSongData, setCurrentSongData] = useState({});
 
-    const defaultMusicInfo: MusicInfo = {
-        id: 0,
-        arName: "Daily Mix",
-        musicName: "12 Tracks",
-        musicUrl: "./images/album-cover.png",
-        picUrl: "",
-        lrc: ""
-    };
 
     return (
         <>
@@ -183,11 +174,9 @@ export default function App() {
                 <div className="fixed">
                     <VideoPlayerButton onClick={() => setShowVideoPlayer(!showVideoPlayer)}/>
                 </div>
-                {showVideoPlayer && (
-                    <div className="fixed bottom-16 right-5 z-10">
-                        <VideoPlayer currentId={currentId}/>
-                    </div>
-                )}
+                <div className={`fixed bottom-16 right-5 z-10 ${showVideoPlayer && "hidden"} `}>
+                    <VideoPlayer currentId={currentId}/>
+                </div>
             </div>
         </>
     );
