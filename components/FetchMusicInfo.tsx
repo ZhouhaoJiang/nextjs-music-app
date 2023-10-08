@@ -28,6 +28,7 @@ export default async function fetchMusicInfo(id: number): Promise<MusicInfo | nu
     try {
         const [urlResponse, picUrlResponse, lrcResponse] = await Promise.all([
             fetch(`https://clouldmusicapi.sleepnow.work/song/url?id=${id}`, { credentials: 'include' }),
+            // fetch(`https://music.iqwq.cn/?id=${id}&type=netease`, { credentials: 'include' }),
             fetch(`https://clouldmusicapi.sleepnow.work/song/detail?ids=${id}`, { credentials: 'include' }),
             fetch(`https://clouldmusicapi.sleepnow.work/lyric?id=${id}`, { credentials: 'include' })
         ]);
@@ -46,6 +47,7 @@ export default async function fetchMusicInfo(id: number): Promise<MusicInfo | nu
         console.info(picUrlResponseBody)
 
         const musicUrl = urlResponseBody?.data[0].url
+        // const musicUrl = urlResponseBody?.data[0].link
         const arName = picUrlResponseBody?.songs[0].ar[0].name
         const picUrl = picUrlResponseBody?.songs[0].al.picUrl
         const musicName = picUrlResponseBody?.songs[0].name

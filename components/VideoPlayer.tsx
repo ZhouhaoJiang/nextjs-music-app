@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Card, CardBody, Image, Button, Progress, Spinner } from "@nextui-org/react";
+import { Card, CardBody, Image, Button, Spinner } from "@nextui-org/react";
 import { HeartIcon } from "./icon/HeartIcon";
 import { PauseCircleIcon } from "./icon/PauseCircleIcon";
 import { NextIcon } from "./icon/NextIcon";
@@ -19,15 +19,9 @@ function formatTime(time: number) {
 export default function VideoPlayer({ currentId }: { currentId: string }) {
     const [liked, setLiked] = React.useState(false);
     const [currentSongData, setCurrentSongData] = useState<MusicInfo | null>(null)
-    const defaultMusicInfo: MusicInfo = {
-        id: 0,
-        arName: "Daily Mix",
-        musicName: "12 Tracks",
-        musicUrl: "./images/album-cover.png",
-        picUrl: "",
-        lrc: ""
-    };
     const audioRef: any = useRef();
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
     // 控制播放和暂停
     const togglePlay = () => {
         if (audioRef.current.paused) {
@@ -36,8 +30,6 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             audioRef.current.pause();
         }
     };
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         fetchMusicInfo(Number(currentId))
@@ -49,7 +41,6 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                         setCurrentTime(audioRef.current?.currentTime || 0);
                     };
                     audioRef.current.onloadedmetadata = () => {
-                        // setDuration(audioRef.current.duration);
                         setDuration(audioRef.current?.duration);
                     };
                 } else {
@@ -64,6 +55,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
 
     const handleSeekBarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentTime(parseFloat(event.target.value));
+
     };
 
     useEffect(() => {

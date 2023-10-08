@@ -13,6 +13,7 @@ const VideoPlayerButton: React.FC<VideoPlayerButtonProps> = ({ onClick }) => {
             radius="full"
             variant="light"
             className="z-10 fixed bottom-5 right-1 flex bg transparent-button"
+            isIconOnly
         >
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
