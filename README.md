@@ -13,7 +13,7 @@ A music app based on nextUI
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
 ## Show
-
+**demo:** [music.sleepnow.work](https://music.sleepnow.work)
 ![Computer terminal](./public/example/computer.png)
 
 ## License
