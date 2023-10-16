@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
     Avatar,
     Card,
-    CardBody,
+    CardBody, CardHeader, Divider,
     Dropdown,
     DropdownItem,
     DropdownMenu,
@@ -24,6 +24,12 @@ import RankIndex from "@/components/Rankdata.tsx";
 import { Link } from "@nextui-org/link";
 import VideoPlayer from "@/components/VideoPlayer.tsx";
 import VideoPlayerButton from "@/components/icon/VideoPlayerButton.tsx";
+import { RankingList, Performance } from "@icon-park/react";
+import RecommendPlaylists from "@/components/RecommendPlaylists.tsx";
+import IndexFrame from "@/pages/components/IndexFrame.tsx";
+import BannerIndex from "@/pages/components/BannerIndex.tsx";
+import { useRouter } from "next/router";
+
 
 export default function App() {
     // const [selected, setSelected] = React.useState("login");
@@ -45,103 +51,68 @@ export default function App() {
     const [showVideoPlayer, setShowVideoPlayer] = useState(true);
     const [currentId, setCurrentId] = useState('');
     const [currentSongData, setCurrentSongData] = useState({});
-
+    const router = useRouter()
 
     return (
         <>
-            <Navbar onMenuOpenChange={setIsMenuOpen}>
-                <NavbarContent>
-                    <NavbarMenuToggle
-                        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                        className="sm:hidden"
-                    />
-                    <NavbarBrand>
-                        <AcmeLogo/>
-                        <p className="font-bold text-inherit">Music</p>
-                    </NavbarBrand>
-                </NavbarContent>
-
-                <NavbarContent className="hidden sm:flex gap-10" justify="start">
-                    <NavbarItem>
-                        <Link color="foreground" href="#">
+            <IndexFrame Title={
+                <NavbarContent className="hidden sm:flex gap-4" justify="start">
+                    <NavbarItem isActive={router.pathname === '/'}>
+                        <Link color="foreground" href="/">
                             首页
                         </Link>
                     </NavbarItem>
-                    <NavbarItem>
+                    <NavbarItem isActive={router.pathname === '/ranking'}>
                         <Link href="#" color="foreground">
                             排行榜
                         </Link>
                     </NavbarItem>
-                    <NavbarItem>
+                    <NavbarItem isActive={router.pathname === '/playlist'}>
                         <Link color="foreground" href="#">
                             歌单
                         </Link>
-                    </NavbarItem>
-                    <NavbarMenu>
-                        {menuItems.map((item, index) => (
-                            <NavbarMenuItem key={`${item}-${index}`}>
-                                <Link
-                                    color={
-                                        index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-                                    }
-                                    className="w-full"
-                                    href="#"
-                                    size="lg"
-                                >
-                                    {item}
-                                </Link>
-                            </NavbarMenuItem>
-                        ))}
-                    </NavbarMenu>
-                </NavbarContent>
-
-                <NavbarContent as="div" justify="center">
-                    <Input
-                        classNames={{
-                            base: "max-w-full sm:max-w-[40rem] h-10",
-                            mainWrapper: "h-full",
-                            input: "text-small",
-                            inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-                        }}
-                        placeholder="Type to search..."
-                        size="sm"
-                        startContent={<SearchIcon size={30} width={18} height={18}/>}
-                        type="search"
-                    />
-                </NavbarContent>
-                <NavbarContent as="div" className="items-center" justify="end">
-                    <Dropdown placement="bottom-end">
-                        <DropdownTrigger>
-                            <Avatar
-                                isBordered
-                                as="button"
-                                className="transition-transform"
-                                color="secondary"
-                                name="Jason Hughes"
-                                size="sm"
-                                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                            />
-                        </DropdownTrigger>
-                        <DropdownMenu aria-label="Profile Actions" variant="flat">
-                            <DropdownItem key="profile" className="h-14 gap-2">
-                                <p className="font-semibold">Signed in as</p>
-                                <p className="font-semibold">zoey@example.com</p>
-                            </DropdownItem>
-                            <DropdownItem key="settings">My Settings</DropdownItem>
-                            <DropdownItem key="team_settings">Team Settings</DropdownItem>
-                            <DropdownItem key="analytics">Analytics</DropdownItem>
-                            <DropdownItem key="system">System</DropdownItem>
-                            <DropdownItem key="configurations">Configurations</DropdownItem>
-                            <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-                            <DropdownItem key="logout" color="danger">
-                                Log Out
-                            </DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                </NavbarContent>
-            </Navbar>
+                    </NavbarItem></NavbarContent>
+            }/>
+            <BannerIndex/>
             <div className="flex flex-col w-full z-0">
-                <Card className="max-w-full " style={{ margin: '0 5%', marginTop: '1%' }}>
+                <Card
+                    shadow="sm"
+                    className="max-w-full mx-[5%] mt-[1%]"
+                >
+                    <CardHeader className="flex gap-3">
+                        <Performance theme="multi-color" size="20" fill={['#333', '#2F88FF', '#FFF', '#43CCF8']}
+                                     strokeWidth={3} strokeLinecap="square"/>
+                        <h1 className="text-sm">推荐歌单→</h1>
+                    </CardHeader>
+                    <Divider/>
+                    <CardBody className="overflow-hidden">
+                        <RecommendPlaylists cat={"全部"}/>
+                        {/*    <Tabs*/}
+                        {/*        fullWidth*/}
+                        {/*        size="md"*/}
+                        {/*        aria-label="Tabs form"*/}
+                        {/*    >*/}
+                        {/*        <Tab key="热门" title="热门">*/}
+                        {/*            <RecommendPlaylists cat={"全部"}/>*/}
+                        {/*        </Tab>*/}
+                        {/*    <Tab key="古风" title="古风">*/}
+                        {/*        <RecommendPlaylists cat={"古风"}/>*/}
+                        {/*    </Tab>*/}
+                        {/*    <Tab key="欧美" title="欧美">*/}
+                        {/*        <RecommendPlaylists cat={"欧美"}/>*/}
+                        {/*    </Tab>*/}
+                        {/*</Tabs>*/}
+                    </CardBody>
+                </Card>
+            </div>
+            <div className="flex flex-col w-full z-0">
+                <Card className="max-w-full mx-[5%] mt-[1%]">
+                    <CardHeader className="flex gap-3">
+                        <RankingList theme="multi-color" size="20" fill={['#333', '#2F88FF', '#FFF', '#43CCF8']}
+                                     strokeWidth={3} strokeLinecap="square"/>
+                        <h1 className="text-small">歌曲排行榜→</h1>
+                    </CardHeader>
+                    <Divider/>
                     <CardBody className="overflow-hidden">
                         <Tabs
                             fullWidth

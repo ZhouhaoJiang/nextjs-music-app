@@ -1,19 +1,19 @@
 import MusicInfo from "@/models/MusicInfo.tsx";
+import { apiUrl } from "@/public/apiUrl.tsx";
 
 async function fetchRankData(id: string) {
     try {
         // 获取当前时间戳
         const timestamp = new Date().getTime()
-        const response = await fetch(`https://clouldmusicapi.sleepnow.work/playlist/track/all?id=${id}&timestamp=${timestamp}&limit=18`, { credentials: 'include' });
+        const response = await fetch(`${apiUrl}/playlist/track/all?id=${id}&timestamp=${timestamp}&limit=18`, { credentials: 'include' });
 
         if (!response.ok) {
             if (response.status === 404) {
                 console.error('Data not found');
             } else {
-                console.info('Network response was not ok');
+                console.info('Network response was not ok')
             }
         }
-        console.info(response)
         const responseBody = await response.json();
 
         return responseBody?.songs || [];
@@ -24,13 +24,12 @@ async function fetchRankData(id: string) {
 }
 
 export default async function fetchMusicInfo(id: number): Promise<MusicInfo | null> {
-    console.info(id)
     try {
         const [urlResponse, picUrlResponse, lrcResponse] = await Promise.all([
-            fetch(`https://clouldmusicapi.sleepnow.work/song/url?id=${id}`, { credentials: 'include' }),
+            fetch(`${apiUrl}/song/url?id=${id}`, { credentials: 'include' }),
             // fetch(`https://music.iqwq.cn/?id=${id}&type=netease`, { credentials: 'include' }),
-            fetch(`https://clouldmusicapi.sleepnow.work/song/detail?ids=${id}`, { credentials: 'include' }),
-            fetch(`https://clouldmusicapi.sleepnow.work/lyric?id=${id}`, { credentials: 'include' })
+            fetch(`${apiUrl}/song/detail?ids=${id}`, { credentials: 'include' }),
+            fetch(`${apiUrl}/lyric?id=${id}`, { credentials: 'include' })
         ]);
         if (!urlResponse.ok || !picUrlResponse.ok || !lrcResponse) {
             if (urlResponse.status === 404 || picUrlResponse.status === 404) {
@@ -42,9 +41,6 @@ export default async function fetchMusicInfo(id: number): Promise<MusicInfo | nu
         const urlResponseBody = await urlResponse.json();
         const picUrlResponseBody = await picUrlResponse.json();
         const lrcResponseBody = await lrcResponse.json()
-
-        console.info(urlResponseBody)
-        console.info(picUrlResponseBody)
 
         const musicUrl = urlResponseBody?.data[0].url
         // const musicUrl = urlResponseBody?.data[0].link
