@@ -9,7 +9,17 @@ module.exports = {
         './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
     ],
     theme: {
-        extend: {},
+        extend: {
+            animation: {
+                scrolling: 'scroll 10s linear infinite',
+            },
+            keyframes: {
+                scroll: {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-100%)' },
+                },
+            },
+        },
     },
     darkMode: "class",
     plugins: [nextui()],

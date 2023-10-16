@@ -44,7 +44,6 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             .then((data: MusicInfo | null) => {
                 if (data !== null) {
                     setCurrentSongData(data);
-                    console.info("准备开始播放")
                     audioRef.current.ontimeupdate = () => {
                         setCurrentTime(audioRef.current?.currentTime || 0);
                     };

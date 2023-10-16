@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
 import { apiUrl } from "@/public/apiUrl.tsx";
+import React, { useEffect, useState } from "react";
+import PlayListInfo from "@/models/PlayListInfo.tsx";
+import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
+import { Link } from "@nextui-org/link";
+import { it } from "node:test";
+import { router } from "next/client";
+import { useRouter } from "next/router";
 import { ThreeBody } from "@uiball/loaders";
 
-
-async function fetchData(id: string) {
-    console.log(process.env.NODE_ENV);
+async function fetchRecommendPlaylists(cat: string) {
     try {
-        // 获取当前时间戳
         const timestamp = new Date().getTime()
-        const response = await fetch(`${apiUrl}/playlist/track/all?id=${id}&timestamp=${timestamp}&limit=18`, { credentials: 'include' });
-
+        const response = await fetch(`${apiUrl}/top/playlist/highquality&cat=${cat}&timestamp=${timestamp}`, { credentials: 'include' });
         if (!response.ok) {
             if (response.status === 404) {
                 console.error('Data not found');
@@ -19,33 +20,30 @@ async function fetchData(id: string) {
             }
         }
         const responseBody = await response.json();
+        return responseBody?.playlists || [];
 
-        return responseBody?.songs || [];
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         throw error;
     }
 }
 
-
-// 接受传递的列表 id，和设置当前音乐id的方法 setCurrentId()
-export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
-    id: string,
-    setCurrentId: (id: string) => void,
-    setCurrentSongData: (data: any) => void
+export default function RecommendPlaylists({ cat }: {
+    cat: string
 }) {
-    const [list, setList] = useState([]);
+    const router = useRouter();
+    const [list, setList] = useState<any>();
     const [loading, setLoading] = useState(true);
-
     useEffect(() => {
-        fetchData(id)
+        fetchRecommendPlaylists(cat)
             .then(
                 (data) => {
-                    setList(data); // 将新的列表设置为状态变量的值
-                    setLoading(false)
+                    setList(data);
                 }
             )
-    }, [])
+            .finally(() => setLoading(false))
+    }, []);
+    // console.info(list)
     if (loading) {
         return (
             <div className="flex flex-row justify-center items-center">
@@ -59,18 +57,21 @@ export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
     }
 
     return (
-        // <div className="overflow-x-auto gap-2 grid grid-cols-3 z-0  md:grid-cols-3 lg:grid-cols-6 ">
+        // <div className="gap-2 grid grid-cols-3 z-0 overflow-scroll md:grid-cols-3 lg:grid-cols-6">
         <div className="flex overflow-x-auto overflow-scroll space-x-2">
-            {list.slice(0, 12).map((item: any, index) => (
+            {list?.slice(1, 13).map((item: any, index: number) => (
                 <Card
                     shadow="sm"
                     key={index}
                     isPressable
-                    onClick={() => {
-                        setCurrentId(item.id);
-                        setCurrentSongData(item);
-                    }} // 设置当前播放的音乐 id
-                    className="flex-none w-1/3 md:w-1/6 lg:w-1/6"
+                    onClick={
+                        () => {
+                            console.info(item.id)
+                            router.push(`/playlist/${item.id}`)
+                        }
+                    }
+                    className="flex-none w-[30%] sm:w-1/3 md:w-1/6 lg:w-1/6"
+                    // className="flex-none w-1/3 md:w-1/6 lg:w-1/6"
                 >
                     <CardBody className="overflow-visible scrollbar-hide p-0 z-0">
                         <Image
@@ -80,18 +81,16 @@ export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
                             width="100%"
                             alt={item.name}
                             className="w-full object-cover h-[20%px]"
-                            src={item.al.picUrl}
+                            src={item.coverImgUrl}
                         />
                     </CardBody>
                     <CardFooter className="text-small justify-between">
                         <div className="whitespace-nowrap overflow-scroll scrollbar-hide w-full">
-                            <p>{item.name}</p>
-                            <p className="text-default-500">{item.ar[0].name}</p>
+                            <b>{item.name}</b>
                         </div>
                     </CardFooter>
                 </Card>
             ))}
         </div>
-    );
+    )
 }
-
