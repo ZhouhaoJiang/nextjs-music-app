@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    Avatar,
+    Avatar, Button, ButtonGroup,
     Card,
     CardBody, CardHeader, Divider,
     Dropdown,
@@ -29,6 +29,8 @@ import RecommendPlaylists from "@/components/RecommendPlaylists.tsx";
 import IndexFrame from "@/pages/components/IndexFrame.tsx";
 import BannerIndex from "@/pages/components/BannerIndex.tsx";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentId, setCurrentId, setCurrentPlayTime, setShowVideoPlayer } from "@/redux/store.tsx";
 
 
 export default function App() {
@@ -48,10 +50,18 @@ export default function App() {
         "Help & Feedback",
         "Log Out",
     ];
-    const [showVideoPlayer, setShowVideoPlayer] = useState(true);
-    const [currentId, setCurrentId] = useState('');
     const [currentSongData, setCurrentSongData] = useState({});
     const router = useRouter()
+
+    // store
+    const dispatch = useDispatch();
+    const showVideoPlayer = useSelector((state: any) => state.player.showVideoPlayer);
+    const currentPlayTime = useSelector(setCurrentPlayTime)
+
+    const handleVideoPlayerToggle = () => {
+        dispatch(setShowVideoPlayer());
+    };
+
 
     return (
         <>
@@ -74,6 +84,20 @@ export default function App() {
                     </NavbarItem></NavbarContent>
             }/>
             <BannerIndex/>
+            <div className="flex flex-col w-full z-0 lg:hidden">
+                <Card
+                    shadow="sm"
+                    className="max-w-full mx-[5%] mt-[1%]"
+                >
+                    <CardBody className="">
+                        <div className="flex flex-row flex-wrap space-x-4">
+                            <Button color="primary" variant="shadow">One</Button>
+                            <Button color="primary" variant="shadow">Two</Button>
+                            <Button color="primary" variant="shadow">Three</Button>
+                        </div>
+                    </CardBody>
+                </Card>
+            </div>
             <div className="flex flex-col w-full z-0">
                 <Card
                     shadow="sm"
@@ -87,21 +111,6 @@ export default function App() {
                     <Divider/>
                     <CardBody className="overflow-hidden">
                         <RecommendPlaylists cat={"全部"}/>
-                        {/*    <Tabs*/}
-                        {/*        fullWidth*/}
-                        {/*        size="md"*/}
-                        {/*        aria-label="Tabs form"*/}
-                        {/*    >*/}
-                        {/*        <Tab key="热门" title="热门">*/}
-                        {/*            <RecommendPlaylists cat={"全部"}/>*/}
-                        {/*        </Tab>*/}
-                        {/*    <Tab key="古风" title="古风">*/}
-                        {/*        <RecommendPlaylists cat={"古风"}/>*/}
-                        {/*    </Tab>*/}
-                        {/*    <Tab key="欧美" title="欧美">*/}
-                        {/*        <RecommendPlaylists cat={"欧美"}/>*/}
-                        {/*    </Tab>*/}
-                        {/*</Tabs>*/}
                     </CardBody>
                 </Card>
             </div>
@@ -122,20 +131,16 @@ export default function App() {
                             onSelectionChange={(key) => setSelected(key as string)}
                         >
                             <Tab key="飙升榜" title="飙升榜">
-                                <RankIndex id={"19723756"} setCurrentId={setCurrentId}
-                                           setCurrentSongData={setCurrentSongData}/>
+                                <RankIndex id={"19723756"} setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="新歌榜" title="新歌榜">
-                                <RankIndex id={"3779629"} setCurrentId={setCurrentId}
-                                           setCurrentSongData={setCurrentSongData}/>
+                                <RankIndex id={"3779629"} setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="热歌榜" title="热歌榜">
-                                <RankIndex id={"3778678"} setCurrentId={setCurrentId}
-                                           setCurrentSongData={setCurrentSongData}/>
+                                <RankIndex id={"3778678"} setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                             <Tab key="原创榜" title="原创榜">
-                                <RankIndex id={"2884035"} setCurrentId={setCurrentId}
-                                           setCurrentSongData={setCurrentSongData}/>
+                                <RankIndex id={"2884035"} setCurrentSongData={setCurrentSongData}/>
                             </Tab>
                         </Tabs>
                     </CardBody>
@@ -143,10 +148,10 @@ export default function App() {
             </div>
             <div className="z-10">
                 <div className="fixed">
-                    <VideoPlayerButton onClick={() => setShowVideoPlayer(!showVideoPlayer)}/>
+                    <VideoPlayerButton onClick={handleVideoPlayerToggle}/>
                 </div>
-                <div className={`fixed bottom-16 right-5 z-10 ${showVideoPlayer && "hidden"} `}>
-                    <VideoPlayer currentId={currentId}/>
+                <div className={`fixed bottom-16 right-5 z-10 ${!showVideoPlayer && 'hidden'}`}>
+                    <VideoPlayer/>
                 </div>
             </div>
         </>

@@ -1,13 +1,18 @@
 import { apiUrl } from "@/public/apiUrl.tsx";
 import { useEffect, useState } from "react";
-import { Card, CardBody, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, Image } from "@nextui-org/react";
 import { z } from "zod";
 import { ThreeBody } from "@uiball/loaders";
 import { Link } from "@nextui-org/link";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentId, setCurrentPlayTime } from "@/redux/store.tsx";
 // import BannerInfo from "@/models/BannerInfo.tsx";
 
 type BannerInfo = {
     pic: string;
+    song: {
+        id: any
+    }
 };
 
 export async function fetchBannerInfo() {
@@ -32,6 +37,15 @@ export default function BannerIndex() {
     const [banners, setBanners] = useState<BannerInfo[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true)
+
+    const dispatch = useDispatch();
+    const handleSetCurrentId = (id: any) => {
+        dispatch(setCurrentId(id));
+    };
+
+    // 添加localStorage
+    const CACHE_KEY = `recommend_playlist`;
+    const CACHE_EXPIRATION_TIME = 60 * 60 * 1000; // 60分钟，单位是毫秒
 
     useEffect(() => {
         async function fetchData() {
@@ -104,6 +118,9 @@ export default function BannerIndex() {
                             src={banners[currentIndex].pic}
                             alt={`Banner ${currentIndex + 1}`}
                             className="z-10 sm:w-3/5"
+                            onClick={() => {
+                                handleSetCurrentId(banners[currentIndex].song.id)
+                            }}
                         />
                         <img
                             src={banners[getNextIndex(currentIndex)].pic}
