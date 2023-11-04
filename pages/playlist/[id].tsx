@@ -22,6 +22,9 @@ import VideoPlayerButton from "@/components/icon/VideoPlayerButton.tsx";
 import VideoPlayer from "@/components/VideoPlayer.tsx";
 import { Link } from "@nextui-org/link";
 import { NewtonsCradle } from "@uiball/loaders";
+import { useDispatch, useSelector } from "react-redux";
+import { selectShowVideoPlayer, setCurrentId, setShowVideoPlayer } from "@/redux/store.tsx";
+import { useSetGlobalMusicID } from "@/hooks/useSetGlobalMusicID.tsx";
 
 export default function PlaylistDetail() {
     const router = useRouter();
@@ -64,8 +67,15 @@ export default function PlaylistDetail() {
         }
     }, [playListInfo?.createTime]); // useEffect 依赖 playListInfo?.createTime
 
-    const [showVideoPlayer, setShowVideoPlayer] = useState(true);
     const [currentId, setCurrentId] = useState('');
+
+    // 全局变量
+    const setGlobalMusicID = useSetGlobalMusicID();
+    const showVideoPlayer = useSelector(selectShowVideoPlayer);
+    const dispatch = useDispatch();
+    const handleVideoPlayerToggle = () => {
+        dispatch(setShowVideoPlayer());
+    };
 
     const handleChangePage = (newPage: number) => {
         setPage(newPage);
@@ -122,7 +132,6 @@ export default function PlaylistDetail() {
                         />
                     </CardBody>
                 </Card>
-
             </>
         )
     }
@@ -217,6 +226,7 @@ export default function PlaylistDetail() {
                 <Divider/>
                 <CardBody className="w-full">
                     <div className="flex flex-row">
+                        {/*歌曲展示*/}
                         <Table
                             isStriped
                             aria-label="Example static collection table"
@@ -237,6 +247,7 @@ export default function PlaylistDetail() {
                             }}
                         >
                             <TableHeader>
+                                <TableColumn>ID</TableColumn>
                                 <TableColumn>音乐标题</TableColumn>
                                 <TableColumn>歌手</TableColumn>
                                 <TableColumn>专辑</TableColumn>
@@ -245,7 +256,10 @@ export default function PlaylistDetail() {
                                 {items.map((song: any, index: number) => (
                                     <TableRow key={index}
                                               className="whitespace-nowrap overflow-x-auto overflow-scroll scrollbar-hide">
-                                        <TableCell>
+                                        <TableCell>{index}</TableCell>
+                                        <TableCell onClick={() => {
+                                            setGlobalMusicID(song.id)
+                                        }}>
                                             <div className="flex flex-row">
                                                 <Play theme="multi-color" size="20"
                                                       fill={['#333', '#2F88FF', '#FFF', '#43CCF8']} strokeWidth={3}
@@ -264,13 +278,12 @@ export default function PlaylistDetail() {
             </Card>
             <div className="z-10">
                 <div className="fixed">
-                    <VideoPlayerButton onClick={() => setShowVideoPlayer(!showVideoPlayer)}/>
+                    <VideoPlayerButton onClick={handleVideoPlayerToggle}/>
                 </div>
-                <div className={`fixed bottom-16 right-5 z-10 ${showVideoPlayer && "hidden"} `}>
-                    <VideoPlayer currentId={currentId}/>
+                <div className={`fixed bottom-16 right-5 z-10 ${!showVideoPlayer && 'hidden'}`}>
+                    <VideoPlayer/>
                 </div>
             </div>
-
             {/*<div className="flex flex-row">*/}
             {/*    <Card className="max-w-full mx-[5%] mt-[5%] flex flex-row">*/}
             {/*        <CardBody className="flex flex-row">*/}

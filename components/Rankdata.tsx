@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardFooter, Image, Skeleton } from "@nextui-org/react";
 import { apiUrl } from "@/public/apiUrl.tsx";
 import { ThreeBody } from "@uiball/loaders";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentId, setShowVideoPlayer } from "@/redux/store.tsx";
 
 
-async function fetchData(id: string) {
+// 排行
+async function fetchRankData(id: string) {
     console.log(process.env.NODE_ENV);
     try {
         // 获取当前时间戳
@@ -29,45 +32,72 @@ async function fetchData(id: string) {
 
 
 // 接受传递的列表 id，和设置当前音乐id的方法 setCurrentId()
-export default function RankIndex({ id, setCurrentId, setCurrentSongData }: {
+export default function RankIndex({ id, setCurrentSongData }: {
     id: string,
-    setCurrentId: (id: string) => void,
     setCurrentSongData: (data: any) => void
 }) {
-    const [list, setList] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [rankData, setRankData] = useState([]);
+
+    // 全局ID
+    const dispatch = useDispatch();
+    const handleSetCurrentId = (id: any) => {
+        dispatch(setCurrentId(id));
+        dispatch(setShowVideoPlayer())
+    };
+
+    // 添加localStorage
+    const CACHE_KEY = `rank_data_${id}`;
+    const CACHE_EXPIRATION_TIME = 60 * 60 * 1000; // 60分钟，单位是毫秒
 
     useEffect(() => {
-        fetchData(id)
-            .then(
-                (data) => {
-                    setList(data); // 将新的列表设置为状态变量的值
-                    setLoading(false)
-                }
-            )
-    }, [])
-    if (loading) {
-        return (
-            <div className="flex flex-row justify-center items-center">
-                <ThreeBody
-                    size={35}
-                    speed={1.1}
-                    color="black"
-                />
-            </div>
-        )
-    }
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+
+            // 检查缓存数据是否过期
+            if (Date.now() - parsedData.timestamp < CACHE_EXPIRATION_TIME) {
+                setRankData(parsedData.data);
+            } else {
+                fetchRankData(id)
+                    .then((newData) => {
+                        setRankData(newData);
+                        // 更新 localStorage 中的数据
+                        const cacheData = {
+                            data: newData,
+                            timestamp: Date.now(),
+                        };
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching data:', error);
+                    });
+            }
+        }
+        fetchRankData(id)
+            .then((newData) => {
+                setRankData(newData);
+                // 更新 localStorage 中的数据
+                const cacheData = {
+                    data: newData,
+                    timestamp: Date.now(),
+                };
+                localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }, [id])
 
     return (
         // <div className="overflow-x-auto gap-2 grid grid-cols-3 z-0  md:grid-cols-3 lg:grid-cols-6 ">
         <div className="flex overflow-x-auto overflow-scroll space-x-2">
-            {list.slice(0, 12).map((item: any, index) => (
+            {rankData.slice(0, 12).map((item: any, index) => (
                 <Card
                     shadow="sm"
                     key={index}
                     isPressable
                     onClick={() => {
-                        setCurrentId(item.id);
+                        handleSetCurrentId(item.id);
                         setCurrentSongData(item);
                     }} // 设置当前播放的音乐 id
                     className="flex-none w-1/3 md:w-1/6 lg:w-1/6"

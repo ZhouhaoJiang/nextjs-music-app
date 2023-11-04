@@ -34,27 +34,61 @@ export default function RecommendPlaylists({ cat }: {
     const router = useRouter();
     const [list, setList] = useState<any>();
     const [loading, setLoading] = useState(true);
+
+    // 添加localStorage
+    const CACHE_KEY = `recommend_playlist`;
+    const CACHE_EXPIRATION_TIME = 60 * 60 * 1000; // 60分钟，单位是毫秒
+
     useEffect(() => {
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+
+            // 检查缓存数据是否过期
+            if (Date.now() - parsedData.timestamp < CACHE_EXPIRATION_TIME) {
+                setList(parsedData.data);
+            } else {
+                fetchRecommendPlaylists(cat)
+                    .then(
+                        (data) => {
+                            setList(data);
+                            // 更新 localStorage 中的数据
+                            const cacheData = {
+                                data: data,
+                                timestamp: Date.now(),
+                            };
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+                        }
+                    )
+                    .finally(() => setLoading(false))
+            }
+        }
         fetchRecommendPlaylists(cat)
             .then(
                 (data) => {
                     setList(data);
+                    // 更新 localStorage 中的数据
+                    const cacheData = {
+                        data: data,
+                        timestamp: Date.now(),
+                    };
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
                 }
             )
             .finally(() => setLoading(false))
-    }, []);
+    }, [cat]);
     // console.info(list)
-    if (loading) {
-        return (
-            <div className="flex flex-row justify-center items-center">
-                <ThreeBody
-                    size={35}
-                    speed={1.1}
-                    color="black"
-                />
-            </div>
-        )
-    }
+    // if (loading) {
+    //     return (
+    //         <div className="flex flex-row justify-center items-center">
+    //             <ThreeBody
+    //                 size={35}
+    //                 speed={1.1}
+    //                 color="black"
+    //             />
+    //         </div>
+    //     )
+    // }
 
     return (
         // <div className="gap-2 grid grid-cols-3 z-0 overflow-scroll md:grid-cols-3 lg:grid-cols-6">

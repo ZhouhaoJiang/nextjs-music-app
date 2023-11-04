@@ -1,5 +1,3 @@
-import MusicInfo from "@/models/MusicInfo.tsx";
-
 export default interface PlayListInfo {
     name: string,
     id: number,

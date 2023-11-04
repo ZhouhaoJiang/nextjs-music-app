@@ -8,6 +8,14 @@ import { RepeatOneIcon } from "./icon/RepeatOneIcon";
 import { ShuffleIcon } from "./icon/ShuffleIcon";
 import fetchMusicInfo from "@/components/FetchMusicInfo.tsx";
 import MusicInfo from "@/models/MusicInfo.tsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    selectCurrentId, selectCurrentPlayTime,
+    selectShowVideoPlayer,
+    setCurrentId,
+    setCurrentPlayTime,
+    setShowVideoPlayer
+} from "@/redux/store.tsx";
 
 // 将秒数转换为时分秒格式
 function formatTime(time: number) {
@@ -16,7 +24,8 @@ function formatTime(time: number) {
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 }
 
-export default function VideoPlayer({ currentId }: { currentId: string }) {
+// export default function VideoPlayer({ currentId }: { currentId: string }) {
+export default function VideoPlayer() {
     const [liked, setLiked] = React.useState(false);
     const [currentSongData, setCurrentSongData] = useState<MusicInfo | null>(null)
     const defaultMusicInfo: MusicInfo = {
@@ -27,6 +36,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
         picUrl: "",
         lrc: ""
     };
+
     const audioRef: any = useRef();
     // 控制播放和暂停
     const togglePlay = () => {
@@ -36,7 +46,14 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             audioRef.current.pause();
         }
     };
-    const [currentTime, setCurrentTime] = useState(0);
+    // 全局变量
+    const dispatch = useDispatch();
+    const showVideoPlayer = useSelector(selectShowVideoPlayer);
+    const currentId = useSelector(selectCurrentId);
+    const currentPlayTime = useSelector(selectCurrentPlayTime);
+    // console.info(currentPlayTime)
+
+    const [currentTime, setCurrentTime] = useState(currentPlayTime);
     const [duration, setDuration] = useState(0);
 
     useEffect(() => {
@@ -44,15 +61,12 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
             .then((data: MusicInfo | null) => {
                 if (data !== null) {
                     setCurrentSongData(data);
-                    audioRef.current.ontimeupdate = () => {
-                        setCurrentTime(audioRef.current?.currentTime || 0);
-                    };
+                    // 获取总时长
                     audioRef.current.onloadedmetadata = () => {
-                        // setDuration(audioRef.current.duration);
                         setDuration(audioRef.current?.duration);
                     };
                     setTimeout(() => {
-                        audioRef.current.play(); // 等待1秒后开始播放
+                        audioRef.current.play();
                     }, 100);
                 } else {
                     console.log("Data is null or fetching failed.");
@@ -62,6 +76,15 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                 console.error("Error fetching data:", error);
             });
     }, [currentId]);
+
+    useEffect(() => {
+        // 当前发生变化时设置当前时间
+        audioRef.current.ontimeupdate = () => {
+            setCurrentTime(audioRef.current?.currentTime || 0);
+            dispatch(setCurrentPlayTime(audioRef.current?.currentTime));
+        };
+
+    }, []);
 
 
     const handleSeekBarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +96,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
     return (
         <Card
             isBlurred
-            className="border-none bg-background/60 dark:bg-default-100/50 max-w-[610px]"
+            className="z-50 border-none bg-background/60 dark:bg-default-100/50 max-w-[610px]"
             shadow="sm"
         >
             <CardBody>
@@ -114,6 +137,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                             </Button>
                         </div>
 
+                        {/*滚动条*/}
                         <div className="flex flex-col mt-3 gap-1">
                             <input
                                 type="range"
@@ -124,7 +148,7 @@ export default function VideoPlayer({ currentId }: { currentId: string }) {
                             />
 
                             <div className="flex justify-between">
-                                <p className="text-small">{formatTime(currentTime)}</p>
+                                <p className="text-small">{formatTime(currentPlayTime)}</p>
                                 <p className="text-small text-foreground/50">{formatTime(duration)}</p>
                             </div>
                         </div>

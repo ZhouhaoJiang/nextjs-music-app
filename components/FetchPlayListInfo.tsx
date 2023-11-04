@@ -4,8 +4,6 @@ import PlayListInfo from "@/models/PlayListInfo.tsx";
 
 export default async function fetchPlayListInfo(id: any) {
     try {
-
-
         const [musicResp, playListInfoResp] = await Promise.all([
                 fetch(`${apiUrl}/playlist/track/all?id=${id}`, { credentials: 'include' }),
                 fetch(`${apiUrl}/playlist/detail?id=${id}`, { credentials: 'include' })
